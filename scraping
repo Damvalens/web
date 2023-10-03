@@ -1,0 +1,17 @@
+import requests
+from bs4 import BeautifulSoup
+import os
+url = ("https://www.paramountplasticos.com.br/categoria-produto/servico/page/12/")
+response = requests.get(url)
+html_content = response.content
+soup = BeautifulSoup(html_content, "html.parser")
+images = soup.find_all("img")
+if not os.path.exists("images"):
+    os.mkdir("images")
+for image in images:
+    image_url = image.get("src")
+    image_name = image_url.split("/")[-1]
+    image_path = os.path.join("images", image_name)
+    response = requests.get(image_url)
+    with open(image_path, "wb") as f:
+        f.write(response.content)
